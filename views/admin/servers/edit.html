@@ -1,0 +1,99 @@
+{% set title = "编辑服务器" %}
+{%set admin = true%}
+{% extends "../../base.html" %}
+
+{% block content %}
+<div class="mdui-card mt">
+    <div class="mdui-card-primary">
+        <div class="mdui-card-primary-title mdui-text-truncate">{{server.name}}</div>
+        <input type="text" id='sid' value="{{server.sid}}" hidden>
+    </div>
+    <div class="mdui-card-content">
+        <div class="mdui-row">
+            <div class="mdui-col-xs-4 mdui-textfield">
+                <label class="mdui-textfield-label">name</label>
+                <input class="mdui-textfield-input" type="text" id='edit_name' value="{{server.name}}">
+            </div>            
+            {%set stas={'1':'正常','2':'对外隐藏','0':'不可用'}%}
+            <div class="mdui-col-xs-2 mdui-textfield">
+                <label class="mdui-textfield-label">状态</label>
+                <select class="mdui-select" id='edit_status'>
+                    {%for sta,name in stas%}
+                    <option value="{{sta}}" {%if sta==server.status%}selected{%endif%}>{{name}}</option>
+                    {%endfor%}
+                </select>
+            </div>
+            <input type="text" id='edit_top' value="{{server.top}}" hidden>
+        </div>
+
+        <br>
+        <h3>API</h3>
+        <div class="mdui-row mdui-row">
+            <div class="mdui-col mdui-textfield">
+                <label class="mdui-textfield-label">指定网卡 (默认统计全部)</label>
+                <input class="mdui-textfield-input" type="text" id='edit_device' value="{{server.data.device}}" placeholder="eth0">
+            </div>
+            <div class="mdui-col mdui-textfield">
+                <label class="mdui-textfield-label">通讯秘钥</label>
+                <input class="mdui-textfield-input" type="text" id='edit_api_key' value="{{server.data.api.key}}">
+            </div>
+        </div>
+    </div>
+    <div class="mdui-card-menu">
+        <button class="mdui-btn mdui-btn-icon mdui-color-blue mdui-text-color-white" onclick="edit()" mdui-tooltip="{content:'保存修改'}">
+            <i class="mdui-icon material-icons">save</i>
+        </button>
+        <button class="mdui-btn mdui-btn-icon mdui-color-red mdui-text-color-white" onclick="del()">
+            <i class="mdui-icon material-icons">delete</i>
+        </button>
+    </div>
+    <div class="mdui-card-actions">
+        {%block actions%}
+        <button class="btn mdui-btn mdui-btn-dense mdui-btn-raised mdui-color-blue mdui-text-color-white" onclick="init()" mdui-tooltip="{content:'安装探针'}">安装</button>
+        {%endblock%}
+    </div>
+</div>
+{%endblock%}
+
+{%block js%}
+{%block editscript%}
+<script>
+async function edit(){
+    var sid=V('sid'),
+        name=V('edit_name'),
+        top=Number(V('edit_top')),
+        status=Number(V('edit_status'));
+    startloading();
+    var data={
+        api:{
+            key:V('edit_api_key'),
+        },
+        device:V('edit_device'),
+    };
+    var res=await postjson(`./edit`,{sid,name,data,top,status});
+    endloading();
+    notice(res.data);
+}
+</script>
+{%endblock%}
+<script>
+function init(){
+    var sid=V('sid');
+    open(`/install/${sid}`);
+}
+async function del(){
+    if(!confirm("确认删除?"))return;
+    startloading();
+    var res=await postjson(`./del`);
+    endloading();
+    notice(res.data);
+    if(res.status)redirect('/admin/servers/');
+}
+document.addEventListener("keydown", (e)=>{
+    if ((window.navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)  && e.keyCode == 83) {
+        e.preventDefault();
+        edit();
+    }
+}, false);
+</script>
+{%endblock%}

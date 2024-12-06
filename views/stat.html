@@ -1,0 +1,113 @@
+{%set title = "节点状态"%}
+{%extends "./base.html"%}
+
+{%block content%}
+<style>.offline st,.offline at,.offline gt{color: grey;}</style>
+<div class="mdui-card mt {%if not node.stat%}mdui-text-color-grey offline{%endif%}">
+    <div class="mdui-card-primary">
+        <div class="mdui-card-primary-title mdui-text-truncate">{{node.name}}</div>
+        <!-- <div class="mdui-card-primary-subtitle">{{node.describe}}</div> -->
+    </div>
+    <div class="mdui-card-menu">
+        <i class="mdui-icon material-icons" id="host">info_outline</i>
+        {%if admin%}
+        <a href="/admin/servers/{{sid}}/" class="mdui-btn mdui-btn-icon">
+            <i class="mdui-icon material-icons">edit</i>
+        </a>
+        {%endif%}
+    </div>
+    <div class="mdui-card-content">
+        <ul class="mdui-list">
+            <li class="mdui-list-item">
+                <i class="mdui-list-item-icon mdui-icon material-icons">memory</i>
+                <div class="mdui-list-item-content">
+                    <st class="mdui-list-item-title mdui-list-item-one-line">CPU <span id="CPU">{{(100*node.stat.cpu.multi).toFixed(2)}}%</span></st>
+                    <div class="mdui-list-item-text" style="opacity:1;">
+                        <!-- <div class="mdui-progress">
+                            <div id="CPU_progress" class="mdui-progress-determinate mdui-color-indigo-400" style="width: 0%;"></div>
+                        </div> -->
+                        {%for usage in node.stat.cpu.single%}
+                        <div class="mdui-progress">
+                            <div id="CPU{{loop.index}}_progress" class="mdui-progress-determinate mdui-color-indigo-400" style="width: {{usage*100}}%;"></div>
+                        </div>
+                        {%endfor%}
+                    </div>
+                </div>
+            </li>
+            <li class="mdui-list-item" id="MEM_item">
+                <i class="mdui-list-item-icon mdui-icon material-icons">straighten</i>
+                <div class="mdui-list-item-content">
+                    <at class="mdui-list-item-title mdui-list-item-one-line">MEM <span id="MEM">{{(100*node.stat.mem.mem).toFixed(2)}}%</span></at>
+                    <div class="mdui-list-item-text" style="opacity:1;">
+                        <div class="mdui-progress">
+                            <div id="MEM_progress" class="mdui-progress-determinate mdui-color-pink-400" style="width: {{node.stat.mem.mem*100}}%;"></div>
+                        </div>
+                        <div class="mdui-progress">
+                            <div id="SWAP_progress" class="mdui-progress-determinate mdui-color-red-400" style="width: {{node.stat.mem.swap*100}}%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="mdui-list-item">
+                <i class="mdui-list-item-icon mdui-icon material-icons">swap_vert</i>
+                <div class="mdui-list-item-content">
+                    <div class="mdui-list-item-title">下行</div>
+                    <div class="mdui-list-item-text mdui-list-item-one-line" style="opacity:1;">
+                        <st><span id="NET_IN"></span></st>
+                    </div>
+                </div>
+                <div class="mdui-list-item-content">
+                    <div class="mdui-list-item-title">上行</div>
+                    <div class="mdui-list-item-text mdui-list-item-one-line" style="opacity:1;">
+                        <at><span id="NET_OUT"></span></at>
+                    </div>
+                </div>
+            </li>
+            <li class="mdui-list-item">
+                <i class="mdui-list-item-icon mdui-icon material-icons">swap_horiz</i>
+                <div class="mdui-list-item-content">
+                    <div class="mdui-list-item-title mdui-list-item-one-line">总下行</div>
+                    <div class="mdui-list-item-text" style="opacity:1;">
+                        <st><span id="NET_IN_TOTAL">{{strB(node.stat.net.total.in)}}</span></st>
+                    </div>
+                </div>
+                <div class="mdui-list-item-content">
+                    <div class="mdui-list-item-title mdui-list-item-one-line">总上行</div>
+                    <div class="mdui-list-item-text" style="opacity:1;">
+                        <at><span id="NET_OUT_TOTAL">{{strB(node.stat.net.total.out)}}</span></at>
+                    </div>
+                </div>
+            </li>
+            <br>
+            {%include "./statistics.html"%}
+            <br>
+            {%if admin%}
+            <!-- <div class="mdui-table-fluid"> -->
+                <table class="mdui-table">
+                    <thead>
+                        <tr>
+                            <th>device</th><th>下行</th><th>上行</th><th>总下行</th><th>总上行</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {%for device,net in node.stat.net.devices%}
+                        <tr>
+                            <td>{{device}}</td>
+                            <td id="net_{{device}}_delta_in"></td>
+                            <td id="net_{{device}}_delta_out"></td>
+                            <td id="net_{{device}}_total_in">{{strB(net.total.in)}}</td>
+                            <td id="net_{{device}}_total_out">{{strB(net.total.out)}}</td>
+                        </tr>
+                        {%endfor%}
+                    </tbody>
+                </table>
+            <!-- </div> -->
+             {%endif%}
+        </ul>
+    </div>
+</div>
+{%endblock%}
+
+{%block js%}
+<script src="/js/stat.js"></script>
+{%endblock%}

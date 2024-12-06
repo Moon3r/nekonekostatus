@@ -1,0 +1,84 @@
+{%set title = "安装"%}
+{%set admin=true%}
+{%extends "../base.html"%}
+
+{%block content%}
+<div class="mdui-textfield">
+    <label class="mdui-textfield-label">Run Command</label>
+    <input class="mdui-textfield-input ccp" type="text" value="$ ./neko-status -c config.yaml" disabled/>
+</div>
+
+<div class="mdui-textfield">
+<label class="mdui-textfield-label">config.yaml</label>
+<pre>
+<textarea class="mdui-textfield-input ccp" disabled>
+key: {{data.key}}
+sid: {{data.sid}}
+host: {{data.host}}
+port: {{data.port}}
+interval: {{data.interval}}
+</textarea>
+</pre>
+</div>
+
+<div class="mdui-textfield">
+<label class="mdui-textfield-label">neko-status.service</label>
+<pre>
+<textarea class="mdui-textfield-input ccp" disabled>
+[Unit]
+Description=nekonekostatus
+
+[Service]
+Restart=always
+RestartSec=5
+ExecStart=/usr/bin/neko-status -c /etc/neko-status/config.yaml
+
+[Install]
+WantedBy=multi-user.target
+</textarea>
+</pre>
+</div>
+
+<select class="mdui-select" id="framework" mdui-select="{position: 'bottom'}">
+    <option value="neko-status_linux_amd64">neko-status_linux_amd64</option>
+    <option value="neko-status_darwin_amd64">neko-status_darwin_amd64</option>
+    <option value="neko-status_windows_amd64.exe">neko-status_windows_amd64.exe</option>
+    <option value="neko-status_freebsd_amd64">neko-status_freebsd_amd64</option>
+    <option value="neko-status_openbsd_amd64">neko-status_openbsd_amd64</option>
+    <option value="neko-status_netbsd_amd64">neko-status_netbsd_amd64</option>
+    <option value="neko-status_linux_arm64">neko-status_linux_arm64</option>
+    <option value="neko-status_darwin_arm64">neko-status_darwin_arm64</option>
+    <option value="neko-status_linux_386">neko-status_linux_386</option>
+    <option value="neko-status_windows_386.exe">neko-status_windows_386.exe</option>
+    <option value="neko-status_freebsd_386">neko-status_freebsd_386</option>
+    <option value="neko-status_openbsd_386">neko-status_openbsd_386</option>
+    <option value="neko-status_netbsd_386">neko-status_netbsd_386</option>
+    <option value="neko-status_linux_arm7">neko-status_linux_arm7</option>
+    <option value="neko-status_linux_arm6">neko-status_linux_arm6</option>
+    <option value="neko-status_linux_arm5">neko-status_linux_arm5</option>
+    <option value="neko-status_linux_mips">neko-status_linux_mips</option>
+    <option value="neko-status_linux_mipsle">neko-status_linux_mipsle</option>
+    <option value="neko-status_linux_mips_softfloat">neko-status_linux_mips_softfloat</option>
+    <option value="neko-status_linux_mipsle_softfloat">neko-status_linux_mipsle_softfloat</option>
+    <option value="neko-status_linux_mips64">neko-status_linux_mips64</option>
+    <option value="neko-status_linux_mips64le">neko-status_linux_mips64le</option>
+    <option value="neko-status_linux_mips64_softfloat">neko-status_linux_mips64_softfloat</option>
+    <option value="neko-status_linux_mips64le_softfloat">neko-status_linux_mips64le_softfloat</option>
+    <option value="neko-status_linux_ppc64">neko-status_linux_ppc64</option>
+    <option value="neko-status_linux_ppc64le">neko-status_linux_ppc64le</option>
+  </select>
+  Download Install Script: 
+  <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent" id="generate" onclick="generate()">Generate</button></br>
+  <div class="mdui-textfield">
+    <label class="mdui-textfield-label">Run Command</label>
+    <input class="mdui-textfield-input ccp" type="text" value="$ bash install.sh" disabled/>
+    </div>
+{%endblock%}
+
+{%block js%}
+<script>
+    async function generate(){
+        open("./{{data.sid}}/script?key={{data.key}}&fw="+V('framework'));
+    }
+</script>
+{%endblock%}

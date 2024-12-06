@@ -1,0 +1,65 @@
+{% set title = "新增服务器" %}
+{%set admin = true%}
+{% extends "../../base.html" %}
+
+{% block content %}
+<div class="mdui-card mt">
+    <div class="mdui-card-primary">
+        <div class="mdui-card-primary-title mdui-text-truncate">新增服务器</div>
+    </div>
+    <div class="mdui-card-content">
+        <div class="mdui-row mdui-row-sm-3">
+            <div class="mdui-col-xs-4 mdui-textfield">
+                <label class="mdui-textfield-label">sid</label>
+                <input class="mdui-textfield-input" type="text" id='add_sid' value="{{uuid.v4()}}">
+            </div>
+            <div class="mdui-col-xs-6 mdui-textfield">
+                <label class="mdui-textfield-label">name</label>
+                <input class="mdui-textfield-input" type="text" id='add_name'>
+            </div>
+        </div>
+
+        <br>
+
+        <br>
+
+        <h3>API</h3>
+        <div class="mdui-row mdui-row">
+            <div class="mdui-col mdui-textfield">
+                <label class="mdui-textfield-label">指定网卡 (默认统计全部)</label>
+                <input class="mdui-textfield-input" type="text" id='add_device' placeholder="eth0">
+            </div>
+            <div class="mdui-col mdui-textfield">
+                <label class="mdui-textfield-label">通讯秘钥</label>
+                <input class="mdui-textfield-input" type="text" id='add_api_key' value="{{uuid.v4()}}">
+            </div>
+        </div>
+    </div>
+    <div class="mdui-card-menu">
+        <button class="mdui-btn mdui-btn-icon mdui-color-green mdui-text-color-white" onclick="add()" mdui-tooltip="{content:'保存并添加'}">
+            <i class="mdui-icon material-icons">save</i>
+        </button>
+    </div>
+</div>
+{%endblock%}
+{%block js%}
+{%block addscript%}
+<script>
+async function add(){
+    var sid=V('add_sid'),
+        name=V('add_name');
+    startloading();
+    var data={
+        api:{
+            key:V('add_api_key'),
+        },
+        device:V('add_device')
+    };
+    var res=await postjson(`/admin/servers/add`,{sid,name,data});
+    endloading();
+    notice(res.data);
+    if(res.status)redirect(`/admin/servers/${res.data}/`);
+}
+</script>
+{%endblock%}
+{%endblock%}

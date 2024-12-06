@@ -1,0 +1,9 @@
+config.js
+database/db.db
+node_modules
+work.js
+neko-status/build
+modules/servers/neko-status
+tokens.json
+log/*.log
+package-lock.json
