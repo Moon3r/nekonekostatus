@@ -1,5 +1,14 @@
 ## Changelog
 
+### 20241211
+
+- database/setting.js文件，添加从环境变量获取端口和密码设置，默认端口为`5555`，默认密码为`nekonekostatus`
+- docker启动命令修改为`docker run --restart=on-failure --name nekonekostatus -e PORT=5555 -e PASSWORD=nekonekostatus -p 5555:5555 -d nekonekostatus:latest`
+- 修改Dockerfile中npm镜像地址、golang代理地址
+- 可在项目目录下使用`docker compose up -d`直接启动，第一次编译成功后，可将docker-compose.yaml文件中的`build: .`修改为`image: "nekonekostatus-nekonekostatus:latest"`
+
+### 20241206
+
 根据[nekonekostatus](https://github.com/nkeonkeo/nekonekostatus/)修改而来，在此感谢**nkeonkeo**的优秀代码，面板Copyright未进行修改，修改内容如下
 - 去掉了一键安装被控端
 - 去掉了WEBSSH、脚本片段
@@ -8,6 +17,8 @@
 - 自定义数据刷新间隔
 - 详细网卡信息仅管理员可查看
 - js文件本地化
+
+> 管理设置中默认的neko-status下载地址需要本地化，可填写`http://服务器地址/install/download`
 
 ## NekoNekoStatus
 

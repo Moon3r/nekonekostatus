@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  nekonekostatus:
+    build: .
+    restart: on-failure
+    environment:
+      - PORT=5555
+      - PASSWORD=nekonekostatus
+    ports:
+      - "5555:5555"

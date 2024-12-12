@@ -19,8 +19,10 @@ const setting={
     },_all:DB.prepare("SELECT * FROM setting"),
 };
 function init(key,val){if(setting.get(key)==undefined)setting.ins(key,val);}
-init("listen",5555);
-init("password","nekonekostatus");
+let default_port = process.env.PORT || 5555;
+let default_password = process.env.PASSWORD || "nekonekostatus";
+init("listen",default_port);
+init("password",default_password);
 init("site",{
     name:"Neko Neko Status",
     host:"127.0.0.1"

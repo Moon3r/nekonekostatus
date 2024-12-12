@@ -1,12 +1,14 @@
 FROM node:16 AS build
 WORKDIR /app
 COPY . ./
-RUN npm install # --registry=https://registry.npm.taobao.org
+RUN npm install --registry=http://registry.npmmirror.com
 
-FROM golang:1.19-alpine AS gobuild
+FROM golang:alpine AS gobuild
 WORKDIR /app
 COPY ./neko-status ./
-RUN chmod -R 755 /app && go mod download && /app/build.sh
+ENV GO111MODULE=on
+ENV GOPROXY=https://goproxy.cn
+RUN chmod -R 755 /app && go mod download && go get neko-status/stat && go get neko-status  && /app/build.sh
 
 FROM node:16-buster-slim
 COPY --from=build /app /app
