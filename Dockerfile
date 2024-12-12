@@ -12,6 +12,6 @@ RUN chmod -R 755 /app && go mod download && go get neko-status/stat && go get ne
 
 FROM node:16-buster-slim
 COPY --from=build /app /app
-COPY --from=gobuild /app/build /app/neko-status/build
+COPY --from=gobuild /app/build /app/build
 WORKDIR /app
 CMD [ "node", "nekonekostatus.js" ]

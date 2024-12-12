@@ -3,7 +3,7 @@ module.exports=svr=> {
     const {db,setting,pr,parseNumber}=svr.locals;
     svr.get("/install/download/:filename", (req, res)=>{
         let {filename} = req.params;
-        var path=__dirname+'../../build/' + filename;
+        var path=__dirname+'/../../build/' + filename;
         res.download(path);
     });
     svr.get("/install/:sid", (req, res)=>{
