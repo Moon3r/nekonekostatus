@@ -1,3 +1,4 @@
+
 "use strict";
 const fetch=require("node-fetch"),
     schedule=require("node-schedule");
@@ -68,7 +69,7 @@ svr.post("/stats/update",(req,res)=>{
     res.json(pr(1,'update success'));
 });
 
-async function update(server, stat){
+function update(server, stat){
     let {sid}=server;
     if(server.status<=0){
         delete stats[sid];
@@ -119,27 +120,15 @@ async function update(server, stat){
 
 
 svr.ws("/stats/agent", (ws, res) => {
-    let stat = {};
     let key = res.headers.key;
     let sid = res.headers.sid;
     let ss = db.servers.get(sid);
     if (!ss||ss.data.api.key !== key) {
         ws.close(1000, "Closed");
     }
-    ws.on("message", (msg) => {
-        let s=new Set(),wl=[];
+    ws.on("message", async (msg) => {
         let stat = JSON.parse(msg);
-        for(let server of db.servers.all())if(server.status>0){
-            s.add(server.sid);
-            if(updating.has(server.sid))continue;
-            wl.push((async(server)=>{
-                updating.add(server.sid);
-                await update(server, stat);
-                updating.delete(server.sid);
-            })(server));
-        }
-        for(let sid in stats)if(!s.has(sid))delete stats[sid];
-        return Promise.all(wl);
+        update(ss, stat);
     });
 })
 

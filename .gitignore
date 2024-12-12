@@ -7,3 +7,4 @@ modules/servers/neko-status
 tokens.json
 log/*.log
 package-lock.json
+.DS_store
