@@ -1,5 +1,9 @@
 ## Changelog
 
+### 20250221
+
+- 添加wss支持
+
 ### 20241211
 
 - database/setting.js文件，添加从环境变量获取端口和密码设置，默认端口为`5555`，默认密码为`nekonekostatus`
