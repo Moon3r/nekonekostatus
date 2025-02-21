@@ -6,4 +6,5 @@ type CONF struct {
 	Port     int
 	Interval int
 	Sid      string
+	Ssl      bool
 }

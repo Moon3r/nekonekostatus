@@ -17,8 +17,9 @@ module.exports=svr=> {
         let host=setting.site.host;
         let port=setting.listen;
         let interval=setting.interval;
+        let ssl=setting.ssl;
         res.render("install/index",{
-            data:{sid,key,host,port,interval}
+            data:{sid,key,host,port,interval,ssl}
         })
     });
     svr.get("/install/:sid/script", (req, res)=>{
@@ -32,6 +33,7 @@ module.exports=svr=> {
         let port = setting.listen;
         let host = setting.site.host;
         let interval = setting.interval;
+        let ssl = setting.ssl;
         let scripts = `#!/bin/bash
 
 wget --version||yum install wget -y||apt-get install wget -y
@@ -43,6 +45,7 @@ sid: ${sid}
 port: ${port}
 host: ${host}
 interval: ${interval}
+ssl: ${ssl}
 debug: false" > /etc/neko-status/config.yaml
 systemctl stop nekonekostatus
 echo "[Unit]

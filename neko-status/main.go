@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/url"
 	"time"
 
 	"neko-status/stat"
@@ -29,6 +30,7 @@ func main() {
 	flag.IntVar(&Config.Port, "p", 55555, "port")
 	flag.StringVar(&Config.Key, "key", "", "access key")
 	flag.StringVar(&Config.Sid, "s", "", "host sid")
+	flag.BoolVar(&Config.Ssl, "d", false, "SSL mode")
 	flag.BoolVar(&show_version, "v", false, "show version")
 	flag.Parse()
 
@@ -51,13 +53,18 @@ func main() {
 }
 
 func submitStat() {
-	wsurl := fmt.Sprintf("ws://%s:%d/stats/agent", Config.Host, Config.Port)
+	// wsurl := fmt.Sprintf("ws://%s:%d/stats/agent", Config.Host, Config.Port)
+	protocol := "ws"
+	if Config.Ssl {
+		protocol = "wss"
+	}
+	wsurl := url.URL{Scheme: protocol, Host: fmt.Sprintf("%s:%d", Config.Host, Config.Port), Path: "/stats/agent"}
 	fmt.Println(wsurl)
 	dialer := websocket.Dialer{}
 	header := http.Header{}
 	header.Add("key", Config.Key)
 	header.Add("sid", Config.Sid)
-	connect, _, err := dialer.Dial(wsurl, header)
+	connect, _, err := dialer.Dial(wsurl.String(), header)
 	if err != nil {
 		panic(err)
 	}

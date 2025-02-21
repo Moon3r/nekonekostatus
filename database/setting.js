@@ -1,4 +1,3 @@
-
 "use strict"
 module.exports=(DB)=>{
 // DB.prepare("DROP TABLE setting").run();
@@ -30,5 +29,6 @@ init("site",{
 init("neko_status_url","https://github.com/nkeonkeo/nekonekostatus/releases/download/v0.1/neko-status");
 init("debug",0);
 init("interval", 1000);
+init("ssl",false);
 return {setting};
 }
