@@ -4,7 +4,7 @@ const fetch=require("node-fetch"),
     schedule=require("node-schedule");
 function sleep(ms){return new Promise(resolve=>setTimeout(()=>resolve(),ms));};
 module.exports=async(svr)=>{
-const {db,pr,bot}=svr.locals;
+const {db,pr,bot,setting}=svr.locals;
 var stats={},fails={},highcpu={},highDown={},updating=new Set(),noticed={};
 function getStats(isAdmin=false){
     let Stats={};
@@ -118,13 +118,13 @@ function update(server, stat){
     }
 }
 
-
 svr.ws("/stats/agent", (ws, res) => {
     let key = res.headers.key;
     let sid = res.headers.sid;
     let ss = db.servers.get(sid);
     if (!ss||ss.data.api.key !== key) {
         ws.close(1000, "Closed");
+        return
     }
     ws.on("message", async (msg) => {
         let stat = JSON.parse(msg);
@@ -177,4 +177,27 @@ schedule.scheduleJob({minute:0,second:1},()=>{
 });
 schedule.scheduleJob({hour:4,minute:0,second:2},()=>{db.traffic.shift_ds();});
 schedule.scheduleJob({date:1,hour:4,minute:0,second:3},()=>{db.traffic.shift_ms();});
+schedule.scheduleJob({second:0},()=>{
+    let notices = Array();
+    for(let {sid} of db.servers.all()) {
+        let stat = stats[sid];
+        console.log(stat);
+        if (stat == undefined) {
+            continue
+        }
+        let timestamp = stat.timestamp;
+        let temp = Math.floor(Date.now() / 1000) - timestamp;
+        if (temp > 60) {
+            stats[sid] = {name:stat.name,stat:false};
+            notices.push(stat.name);
+        }
+    }
+    if (setting.bot.webhook && notices.length > 0) {
+        let msg = "服务器已掉线：\n";
+        notices.forEach(item => {
+            msg += `\t- ${item}\n`;
+        });
+        bot.funcs.notice(msg);
+    }
+});
 }

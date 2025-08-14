@@ -104,6 +104,7 @@ func GetStat() (map[string]interface{}, error) {
 		return nil, err
 	}
 	res["host"] = host
+	res["timestamp"] = time.Now().Unix()
 
 	return res, nil
 }

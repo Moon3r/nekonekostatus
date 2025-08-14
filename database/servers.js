@@ -15,6 +15,10 @@ const servers={
         this._upd_top.run(top,sid);
     },_upd_top:DB.prepare("UPDATE servers set top=? WHERE sid=?"),
     _get:DB.prepare("SELECT * FROM servers WHERE sid=?"),
+    get_sname(sid){
+        var server=this._get.get(sid);
+        return server.name;
+    },
     get(sid){
         var server=this._get.get(sid);
         if(server)server.data=JSON.parse(server.data);
